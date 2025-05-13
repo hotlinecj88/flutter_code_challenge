@@ -1,0 +1,1 @@
+const BOTTOMBAR_HEIGHT = 70.0;
