@@ -25,10 +25,13 @@ class _BlockScaffoldNavbar extends ConsumerState<BlockScaffoldNavbar>{
   List<Map<String, dynamic>> listMenu = [
     {'id': 0, 'title': 'Home', 'icon': Icons.home},
     {'id': 1, 'title': 'Search', 'icon': Icons.search},
+    {'id': 2, 'title': 'Profile', 'icon': Icons.person},
   ];
   
   @override
   Widget build(BuildContext context) {
+
+    
 
     return BlockUnfocusTap(
       child: Stack(

@@ -9,7 +9,7 @@
       "name": "flutter_code_challenge",
       "request": "launch",
       "type": "dart",
-      "deviceId": "00008101-001808E91160001E"
+      // "deviceId": "00008101-001808E91160001E"
     },
     {
       "name": "flutter_code_challenge (profile mode)",

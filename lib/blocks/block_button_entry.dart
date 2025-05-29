@@ -29,7 +29,6 @@ class BlockButtonEntry extends StatelessWidget{
           foregroundColor: Colors.transparent,
           padding: padding,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          // shape: buttonShape
           shadowColor: Colors.transparent,
         ),
         onPressed: () {  

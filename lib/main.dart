@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_code_challenge/config/app_config.dart';
+import 'package:flutter_code_challenge/extensions/snackbar_extension.dart';
+import 'package:flutter_code_challenge/pages/profile/states/profile_state.dart';
 import 'package:flutter_code_challenge/state/product_state.dart';
 import 'package:flutter_code_challenge/state/router_state.dart';
-import 'package:flutter_code_challenge/state/database_state.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final container = ProviderContainer();
 
+   await Supabase.initialize(
+    url: SUPABASE_URL,
+    anonKey: SUPABASE_ANON_KEY,
+  );
+  
+  final container = ProviderContainer();
   // Loading state to memory
   container.read(product_state);
 
@@ -29,17 +37,28 @@ class App extends HookConsumerWidget{
   Widget build(BuildContext context, WidgetRef ref) {
     final _router_state = ref.watch(router_state);
 
-    // Warn-up app loading
-    final hasInitialized = useState<bool>(false);
-
     useEffect((){
       Future.microtask(() async {
-        await DatabaseState.instance.init();
+        ref.read(profile_state.notifier).auto_login(prefix_loading: 'auto_login_loading');
         ref.read(product_state.notifier).fetchInit(prefix_loading: 'product_init_loading');
-        hasInitialized.value = true;
+        return;
       }); 
       return null;
     }, []);
+
+    ref.listen(profile_autologin_message_error, (_, errorMessage ){
+      if (errorMessage.isNotEmpty) {
+        root_navigator_key.currentContext?.showSnackbar(
+          title: errorMessage,
+          showDuration: Duration(milliseconds: 2000),
+          onClose: (){
+            WidgetsBinding.instance.addPostFrameCallback((_){
+              ref.read(profile_autologin_message_error.notifier).state = '';
+            });
+          }
+        );
+      }
+    });
 
     return MaterialApp.router(
       scaffoldMessengerKey: _scaffoldKey,
@@ -47,13 +66,6 @@ class App extends HookConsumerWidget{
       routerConfig: _router_state,
       title: 'Devolver Digital',
       builder: ( mediaContext, child ){  
-        
-        if( !hasInitialized.value )
-          return Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
         
         // Disable text scaling
         return MediaQuery.withClampedTextScaling(

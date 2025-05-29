@@ -3,6 +3,7 @@ import 'package:flutter_code_challenge/blocks/block_scaffold_navbar.dart';
 import 'package:flutter_code_challenge/config/app_routes.dart';
 import 'package:flutter_code_challenge/pages/products/screen/product_detail.dart';
 import 'package:flutter_code_challenge/pages/tab_main/tab_home.dart';
+import 'package:flutter_code_challenge/pages/tab_main/tab_profile.dart';
 import 'package:flutter_code_challenge/pages/tab_main/tab_search.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -11,6 +12,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 final GlobalKey<NavigatorState> root_navigator_key = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> tab_index_nagivator_key = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> tab_search_nagivator_key = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> tab_profile_nagivator_key = GlobalKey<NavigatorState>();
 
 final router_state = Provider<GoRouter>( (ref) {
   
@@ -54,6 +56,18 @@ final router_state = Provider<GoRouter>( (ref) {
               GoRoute(
                 path: ROUTE_TAB_SEARCH,
                 builder: (BuildContext context, GoRouterState state) => TabSearch(),
+                routes: [],
+              ),
+            ],
+          ),
+
+          // Tab Profile
+          StatefulShellBranch(
+            navigatorKey: tab_profile_nagivator_key,
+            routes: [
+              GoRoute(
+                path: ROUTE_TAB_PROFILE,
+                builder: (BuildContext context, GoRouterState state) => TabProfile(),
                 routes: [],
               ),
             ],

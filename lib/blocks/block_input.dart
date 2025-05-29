@@ -5,12 +5,14 @@ class BlockInput extends StatelessWidget {
   final String placeholder;
   final TextEditingController? controller;
   final EdgeInsets contentPadding;
+  final bool password;
 
   BlockInput({
     super.key,
     this.placeholder = 'Placeholder Input',
     this.controller,
     this.contentPadding = const EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
+    this.password = false
   });
 
   @override
@@ -21,6 +23,7 @@ class BlockInput extends StatelessWidget {
     return TextFormField(
       enableSuggestions: false,
       controller: controller,
+      obscureText: password,
       decoration: InputDecoration(
         hintText: placeholder,
         contentPadding: contentPadding,

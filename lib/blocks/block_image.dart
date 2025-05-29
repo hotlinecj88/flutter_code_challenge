@@ -45,7 +45,7 @@ class BlockImage extends StatelessWidget{
         width: width != null ? width : blockSize, 
         height: height != null ? height : blockSize,
         decoration: BoxDecoration(
-          color: theme.colorScheme.primary,
+          color: backgroundColor ?? theme.colorScheme.primary,
           shape: circle == true ? BoxShape.circle : BoxShape.rectangle,
         ),
         child: imageWidget ?? _buildPlaceholder(

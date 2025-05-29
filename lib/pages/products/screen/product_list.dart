@@ -12,23 +12,23 @@ class ProductList extends HookConsumerWidget{
 
     final _product_state = ref.watch(product_state);
 
-    if( _product_state.value?.isEmpty == true )
+    if( _product_state.value?.products?.isEmpty == true )
       return Center(
         child: Text('No products available'),
       );
 
     return ListView.builder(
       padding: EdgeInsets.zero,
-      itemCount: _product_state.value?.length,
+      itemCount: _product_state.value?.products?.length,
       itemBuilder: (context, index) {
-        final product = _product_state.value![index];
+        final product = _product_state.value?.products![index];
         return ProductItem(
           product: product,
           onTap: (){
             GoRouter.of(context).push(
               '${ROUTE_TAB_HOME}/${ROUTE_PRODUCT_DETAILS}',
               extra: {
-                'id': product.id,
+                'id': product!.id,
               }
             );
           },

@@ -12,6 +12,7 @@ class TabHome extends HookConsumerWidget{
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
     final product_init_loading = ref.watch(loading_state('product_init_loading'));
 
     return Scaffold(
@@ -26,5 +27,6 @@ class TabHome extends HookConsumerWidget{
           child: ProductList()
       ),
     );
+
   }
 } 

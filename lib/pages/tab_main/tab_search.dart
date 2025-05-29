@@ -1,9 +1,9 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_code_challenge/blocks/block_appbar_static.dart';
 import 'package:flutter_code_challenge/blocks/block_input.dart';
 import 'package:flutter_code_challenge/config/app_routes.dart';
 import 'package:flutter_code_challenge/pages/products/widgets/product_item.dart';
+import 'package:flutter_code_challenge/state/loading_state.dart';
 import 'package:flutter_code_challenge/state/product_state.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -18,44 +18,34 @@ class TabSearch extends HookConsumerWidget{
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    final _product_state = ref.watch(product_state);
+    final _product_state = ref.watch(product_state); // keep the state in memory
+    final product_search_loading = ref.watch(loading_state('product_search_loading'));
     
     final searchController = useTextEditingController();
-    final searchQuery = useState<String>('');
-    // Previous search query to compare with the current one
     final previousQuery = useRef<String>('');
-    final isSearching = useState<bool>(false);
-    // Debounce timer to limit the number of search queries
-    final debounceTimer = useRef<Timer?>(null);
 
     useEffect(() {
       void listener() {
         final currentInput = searchController.text;
         if (currentInput == previousQuery.value) return;
 
-        isSearching.value = true;
-        debounceTimer.value?.cancel();
-
-        debounceTimer.value = Timer(const Duration(milliseconds: 500), () {
-          searchQuery.value = currentInput;
-          previousQuery.value = currentInput;
-          isSearching.value = false;
-        });
+        if (searchController.text.isNotEmpty) {
+          previousQuery.value = searchController.text;
+          ref.read(product_state.notifier).search(
+            query: currentInput, 
+            prefix_loading: 'product_search_loading'
+          );
+        }
       }
-
       searchController.addListener(listener);
       return () {
         searchController.removeListener(listener);
-        debounceTimer.value?.cancel();
       };
     }, []);
 
-    // Search products by title
-    final filteredProducts = _product_state.value?.where((product) {
-      final query = searchQuery.value.trim().toLowerCase();
-      if (query.isEmpty) return false; // show all
-      return product.title?.toLowerCase().contains(query) ?? false;
-    }).toList();
+
+    // Get search data from product state
+    final displayProducts = ref.read(product_state.notifier).displayProducts;
 
 
     return Scaffold(
@@ -76,30 +66,47 @@ class TabSearch extends HookConsumerWidget{
             ),
 
             Expanded(
-              child: isSearching.value
+              child: product_search_loading == LoadingIndicatorState.loading
               ? Center(child: CircularProgressIndicator())
-              : filteredProducts?.isEmpty == true 
-                ? Center(
-                  child: Text('Search products by title'),
-                )
-                : ListView.builder(
-                  padding: EdgeInsets.zero,
-                  itemCount: filteredProducts?.length,
-                  itemBuilder: (context, index) {
-                    final product = filteredProducts![index];
-
-                    return ProductItem(
-                      product: product,
-                      onTap: (){
-                        GoRouter.of(context).push(
-                          '${ROUTE_TAB_HOME}/${ROUTE_PRODUCT_DETAILS}',
-                          extra: {
-                            'id': product.id,
-                          }
-                        );
-                      },
-                    );
-                  },
+              : displayProducts.isEmpty == true 
+                ? 
+                  product_search_loading == LoadingIndicatorState.error
+                    ? Center(child: Text('Search not found'),)
+                    : Center(child: Text('Search products by title'),) 
+                : Column(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text(
+                        'Found ${displayProducts.length} products',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        padding: EdgeInsets.zero,
+                        itemCount: displayProducts.length,
+                        itemBuilder: (context, index) {
+                          final product = displayProducts[index];
+                      
+                          return ProductItem(
+                            product: product,
+                            onTap: (){
+                              GoRouter.of(context).push(
+                                '${ROUTE_TAB_HOME}/${ROUTE_PRODUCT_DETAILS}',
+                                extra: {
+                                  'id': product.id,
+                                }
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 )
             )
 

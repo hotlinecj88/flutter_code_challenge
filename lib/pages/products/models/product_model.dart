@@ -43,6 +43,7 @@ class ProductModel {
   });
 
   static List<ProductVendorModel> _parseVendors(dynamic raw) {
+    if(raw == null) return [];
     try {
       final decoded = jsonDecode(raw);
       if (decoded is List) {
@@ -60,7 +61,7 @@ class ProductModel {
     final rng = Random();
 
     return ProductModel(
-      id: int.tryParse(json['id']),
+      id: json['id'] as int?,
       title: json['title'] as String?,
       description: json['description'] as String?,
       platforms: (json['platforms'] as String?)?.split(',').map((e) => e.trim()).toList(),

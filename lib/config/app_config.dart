@@ -1,1 +1,3 @@
 const BOTTOMBAR_HEIGHT = 70.0;
+const SUPABASE_URL = 'https://tulgfohthuazyxdtiflh.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1bGdmb2h0aHVhenl4ZHRpZmxoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY0NTA4MjEsImV4cCI6MjA2MjAyNjgyMX0.4v1SpPa5tBYYyifWVdAxhjIAmvU_Z53q3U-dnXJFmDA';
